@@ -4,8 +4,11 @@ from more_itertools import islice_extended
 from threading import Thread
 
 import dateutil.parser
+import dateparser
 import datetime
 import pytz
+
+import re
 
 from lposts.models import Post
 from cruMeScraper.settings import LPOSTS
@@ -59,6 +62,55 @@ class PostScraper:
                 )
                 post.save()
 
+    def _scrapeMedium(self):
+        f = Path(__file__).resolve().parent / 'latest_medium.html'
+        cnt = f.read_text()
+        soup = BeautifulSoup(markup=cnt, features='lxml')
+
+        nScraped = 0
+        ps = soup.select('h4')
+
+        for p in ps:
+            for i in range(5): p = p.parent
+
+            title = (p.select('h2') or [None])[0]
+            if not title: continue
+            title = title.text.strip()
+
+            author = (p.select('h4') or ['Unknown Author'])[0]
+            author = author.text.strip()
+            if re.search(r'^in$', author, flags=re.IGNORECASE): continue
+
+            img = (p.select('img') or [''])[-1]
+            if img:
+                img = img.attrs.get('src', '')
+
+            excerpt = (p.select('h3') or [''])[0]
+            times = None
+            date = None
+            if excerpt:
+                times = excerpt.nextSibling
+                excerpt = excerpt.text.strip()
+
+                ago = (times.select('p') or [None])[0]
+                if ago:
+                    ago = ago.text.strip()
+                    date = dateparser.parse(ago + ' UTC')
+
+            if not date:
+                date = datetime.datetime.now(tz=pytz.UTC)
+
+            nScraped += 1
+
+            if not Post.objects.filter(title=title, author=author):
+                post = Post(
+                    title = title, author = author, article_date = date,
+                    excerpt = excerpt, img_link = img,
+                    source = 'ME',
+                )
+                post.save()
+                pass
+
             # TODO rm this print
             print(f"""
 
@@ -68,9 +120,6 @@ class PostScraper:
     img: {img}
     excerpt: {excerpt}
 """[1:-1])
-
-    def _scrapeMedium(self):
-        pass
 
     def run(self):
         Post.objects.all().delete()
