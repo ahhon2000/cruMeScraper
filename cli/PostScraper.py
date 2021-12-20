@@ -55,6 +55,7 @@ class PostScraper:
                 post = Post(
                     title = title, author = author, article_date = date,
                     excerpt = excerpt, img_link = img,
+                    source = 'TC',
                 )
                 post.save()
 

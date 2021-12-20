@@ -65,6 +65,13 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
+    }, {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'APP_DIRS': True,
+        #'DIRS': [],
+        'OPTIONS': {
+            'environment': 'cruMeScraper.jinja2.environment',
+        },
     },
 ]
 

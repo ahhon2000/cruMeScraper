@@ -1,0 +1,22 @@
+{% for tblName, ps in tables.items() %}
+    <h2>{{ tblName }}</h2>
+    <br>
+    {% for p in ps %}
+        {{ p.title }}
+        <br>
+        {{ p.author }}
+        <br>
+        {{ p.article_date }}
+        <br>
+        {{ p.scraped_date }}
+        <br>
+        {{ p.img_link }}
+        <br>
+        {{ p.excerpt }}
+        <br>
+        <br>
+        <br>
+    {% endfor %}
+    <br>
+    <br>
+{% endfor %}
