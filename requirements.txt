@@ -1,7 +1,7 @@
 Django
 Jinja2
 
-aiohttp
+requests
 beautifulsoup4
 more-itertools
 
