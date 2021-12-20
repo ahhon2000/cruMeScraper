@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from cruMeScraper.settings import LPOSTS
 from lposts.models import Post
 
 class LatestPostsView(TemplateView):
@@ -10,8 +11,12 @@ class LatestPostsView(TemplateView):
 
     def get_context_data(self, **kwarg):
         ctx = super().get_context_data(**kwarg)
+        N = LPOSTS['N_POSTS']
         ts = OrderedDict(map(
-            lambda x: (x[0], x[1].order_by('-article_date', 'title')),
+            lambda x: (
+                x[0],
+                x[1].order_by('-article_date', 'title')[0:N],
+            ),
             (
                 (
                     'TechCrunch & Medium',
