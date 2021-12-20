@@ -37,7 +37,7 @@ class LatestPostsView(TemplateView):
             'fmtDate': lambda d: d.strftime("%Y-%m-%d %H:%M:%S"),
             'appStatic': staticLinkMaker(f'{app_name}/'),
             'fmtExcerpt': lambda e: \
-                    e + '...' if e and not e[-1] in "!?.…" else e,
+                    e + '...' if e and not e[-1] in ":!?.…" else e,
             'enumerate': enumerate,
         })
 

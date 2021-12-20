@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from more_itertools import islice_extended
 from threading import Thread
 
+import requests
+
 import dateutil.parser
 import dateparser
 import datetime
@@ -14,12 +16,24 @@ from lposts.models import Post
 from cruMeScraper.settings import LPOSTS
 
 class PostScraper:
+    URL_TC = 'https://techcrunch.com'
+    URL_ME = 'https://medium.com/tag/news/latest'
+
     def __init__(self):
         pass
 
+    def _download(self, url):
+        req = requests.get(url)
+        code = req.status_code
+        if code != 200: raise Exception(f'failed to download the page: {url} (code={code})')
+
+        return req.content
+
     def _scrapeTechCrunch(self):
-        f = Path(__file__).resolve().parent / 'latest_techCrunch.html'
-        cnt = f.read_text()
+        #f = Path(__file__).resolve().parent / 'latest_techCrunch.html'
+        #cnt = f.read_text()
+        cnt = self._download(self.URL_TC)
+
         soup = BeautifulSoup(markup=cnt, features='lxml')
 
         nScraped = 0
@@ -63,8 +77,9 @@ class PostScraper:
                 post.save()
 
     def _scrapeMedium(self):
-        f = Path(__file__).resolve().parent / 'latest_medium.html'
-        cnt = f.read_text()
+        #f = Path(__file__).resolve().parent / 'latest_medium.html'
+        #cnt = f.read_text()
+        cnt = self._download(self.URL_ME)
         soup = BeautifulSoup(markup=cnt, features='lxml')
 
         nScraped = 0
@@ -110,16 +125,6 @@ class PostScraper:
                 )
                 post.save()
                 pass
-
-            # TODO rm this print
-            print(f"""
-
-{title}
-    date: {date}
-    author: {author}
-    img: {img}
-    excerpt: {excerpt}
-"""[1:-1])
 
     def run(self):
         Post.objects.all().delete()

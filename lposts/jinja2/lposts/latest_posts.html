@@ -74,7 +74,11 @@
                                                 Source:
                                             </div> <!-- col -->
                                             <div class="col-sm-8">
-                                                {{ p.source }}
+                                                {{ {
+                                                        'TC': 'TechCrunch',
+                                                        'ME': 'Medium',
+                                                    }[p.source]
+                                                }}
                                             </div> <!-- col -->
                                         </div> <!-- row -->
                                     </div> <!-- col -->
