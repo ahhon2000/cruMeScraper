@@ -2,4 +2,8 @@ Django
 Jinja2
 
 aiohttp
+beautifulsoup4
 more-itertools
+
+python-dateutil
+pytz
