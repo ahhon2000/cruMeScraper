@@ -10,8 +10,9 @@ class LatestPostsView(TemplateView):
 
     def get_context_data(self, **kwarg):
         ctx = super().get_context_data(**kwarg)
-        ctx.update({
-            'tables': OrderedDict((
+        ts = OrderedDict(map(
+            lambda x: (x[0], x[1].order_by('-article_date', 'title')),
+            (
                 (
                     'TechCrunch & Medium',
                     Post.objects.all(),
@@ -22,7 +23,10 @@ class LatestPostsView(TemplateView):
                     'Medium',
                     Post.objects.filter(source='ME'),
                 ),
-            )),
+            ),
+        ))
+        ctx.update({
+            'tables': ts,
         })
 
         return ctx
