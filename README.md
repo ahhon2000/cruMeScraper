@@ -5,8 +5,8 @@ DESIGN
 ------
 
 The app consists of two components:
-    * A command-line tool that scrapes the latest posts from TechCrunch and Medium.
-    * A Django website for displaying the posts.
+  * A command-line tool that scrapes the latest posts from TechCrunch and Medium.
+  * A Django website for displaying the posts.
 
 Scraped data is stored in an SQLite database.
 
