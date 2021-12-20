@@ -1,4 +1,7 @@
 import asyncio
+import aiohttp
+
+from lposts.models import Post
 
 class PostScraper:
     def __init__(self):
@@ -10,12 +13,9 @@ class PostScraper:
     async def _scrapeMedium(self):
         pass
 
-    def run(self):
-        async def main():
-            cos = (
-                self._scrapeTechCrunch(),
-                self._scrapeMedium(),
-            )
-            await asyncio.gather(*cos)
-
-        asyncio.run(main())
+    async def run(self):
+        cos = (
+            self._scrapeTechCrunch(),
+            self._scrapeMedium(),
+        )
+        await asyncio.gather(*cos)
