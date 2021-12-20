@@ -1,8 +1,7 @@
-import asyncio
-import aiohttp
 from pathlib import Path
 from bs4 import BeautifulSoup
 from more_itertools import islice_extended
+from threading import Thread
 
 import dateutil.parser
 import datetime
@@ -15,13 +14,14 @@ class PostScraper:
     def __init__(self):
         pass
 
-    async def _scrapeTechCrunch(self):
+    def _scrapeTechCrunch(self):
         f = Path(__file__).resolve().parent / 'latest_techCrunch.html'
         cnt = f.read_text()
         soup = BeautifulSoup(markup=cnt, features='lxml')
 
         nScraped = 0
-        for p in soup.select('.post-block__header'):
+        #for p in soup.select('.post-block__header'):
+        for p in soup.select('.post-block'):
             if nScraped >= LPOSTS['N_POSTS']: break
 
             title = (p.select('.post-block__title') or [None])[0]
@@ -41,20 +41,47 @@ class PostScraper:
             if not date:
                 date = datetime.datetime.now(tz=pytz.UTC)
 
+            excerpt = (p.select('.post-block__content') or [''])[0]
+            if excerpt:
+                excerpt = excerpt.text.strip()
+
+            img = (p.select('.post-block__media img') or [''])[0]
+            if img:
+                img = img.attrs.get('src', '')
+
+            nScraped += 1
+
+            if not Post.objects.filter(title=title, author=author):
+                post = Post(
+                    title = title, author = author, article_date = date,
+                    excerpt = excerpt, img_link = img,
+                )
+                post.save()
+
             # TODO rm this print
             print(f"""
+
 {title}
     date: {date}
     author: {author}
+    img: {img}
+    excerpt: {excerpt}
 """[1:-1])
-            nScraped += 1
 
-    async def _scrapeMedium(self):
+    def _scrapeMedium(self):
         pass
 
-    async def run(self):
-        cos = (
-            self._scrapeTechCrunch(),
-            self._scrapeMedium(),
-        )
-        await asyncio.gather(*cos)
+    def run(self):
+        Post.objects.all().delete()
+
+        ths = []
+        for f in (
+            self._scrapeTechCrunch,
+            self._scrapeMedium,
+        ):
+            th = Thread(target=f)
+            th.start()
+            ths.append(th)
+
+        for th in ths:
+            th.join()

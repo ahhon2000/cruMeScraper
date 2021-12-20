@@ -2,7 +2,6 @@
 
 import os, sys
 from pathlib import Path
-import asyncio
 
 scrPath = Path(__file__).resolve()
 scrDir = scrPath.parent
@@ -18,8 +17,5 @@ django.setup()
 
 from PostScraper import PostScraper
 
-async def main():
-    ps = PostScraper()
-    await ps.run()
-
-asyncio.run(main())
+ps = PostScraper()
+ps.run()
