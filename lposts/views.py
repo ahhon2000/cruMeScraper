@@ -27,6 +27,7 @@ class LatestPostsView(TemplateView):
         ))
         ctx.update({
             'tables': ts,
+            'fmtDate': lambda d: d.strftime("%Y-%m-%d %H:%M:%S")
         })
 
         return ctx

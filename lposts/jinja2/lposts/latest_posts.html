@@ -1,16 +1,17 @@
+<h1>The Latest Blog Posts from TechCrunch & Medium</h1>
+
 {% for tblName, ps in tables.items() %}
     <h2>{{ tblName }}</h2>
     <br>
     {% for p in ps %}
-        {{ p.title }}
-        <br>
+        <h3>{{ p.title }}</h3>
         {{ p.author }}
         <br>
-        {{ p.article_date }}
+        Article Date: {{ fmtDate(p.article_date) }}
         <br>
-        {{ p.scraped_date }}
+        Scraped Date: {{ fmtDate(p.scraped_date) }}
         <br>
-        {{ p.img_link }}
+        <img src="{{ p.img_link }}">
         <br>
         {{ p.excerpt }}
         <br>
