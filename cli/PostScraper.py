@@ -34,7 +34,7 @@ class PostScraper:
         #cnt = f.read_text()
         cnt = self._download(self.URL_TC)
 
-        soup = BeautifulSoup(markup=cnt, features='lxml')
+        soup = BeautifulSoup(markup=cnt, features='html.parser')
 
         nScraped = 0
         #for p in soup.select('.post-block__header'):
@@ -80,7 +80,7 @@ class PostScraper:
         #f = Path(__file__).resolve().parent / 'latest_medium.html'
         #cnt = f.read_text()
         cnt = self._download(self.URL_ME)
-        soup = BeautifulSoup(markup=cnt, features='lxml')
+        soup = BeautifulSoup(markup=cnt, features='html.parser')
 
         nScraped = 0
         ps = soup.select('h4')
